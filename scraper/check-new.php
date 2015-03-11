@@ -3,15 +3,15 @@
  *
  * 1 - http://davidwalsh.name/gmail-php-imap
  * 2 - http://php.net/manual/en/function.imap-mail-move.php
- *
+ * 3 - http://unirest.io/php.html
  */
 
 require_once __DIR__ . "/resources/Unirest.php";
-require_once __DIR__ . "credentials.config";
-
+require_once __DIR__ . "/credentials.php";
+require_once __DIR__ . "/functions.php";
 
 /* try to connect */
-$inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
+$inbox = imap_open($hostname,$username,$password) or die('Cannot connect to inbox: ' . imap_last_error());
 
 /* grab emails */
 $emails = imap_search($inbox,'ALL');
@@ -19,9 +19,8 @@ $emails = imap_search($inbox,'ALL');
 /* if emails are returned, cycle through each... */
 if($emails) {
 
-	
-	/* begin output var */
-	$output = '';
+	/* init our lists */
+
 	
 	/* put the newest emails on top */
 	rsort($emails);
@@ -34,43 +33,31 @@ if($emails) {
 		$message = imap_fetchbody($inbox,$email_number,2);
 		
 		/* output the email header information */
-		$output.= '<div class="toggler '.($overview[0]->seen ? 'read' : 'unread').'">';
-		$output.= '<span class="subject">'.$overview[0]->subject.'</span> ';
-		$output.= '<span class="from">'.$overview[0]->from.'</span>';
-		$output.= '<span class="date">on '.$overview[0]->date.'</span>';
-		$output.= '</div>';
-		
-		/* output the email body */
-		$output.= '<div class="body">'.$message.'</div>';
+		$IsRead 	= $overview[0]->seen;
+		$Subject 	= $overview[0]->subject;
+		$From 		= $overview[0]->from;
+		$date   	= $overview[0]->date;
 
-		// WHOIS Request
-		$response = Unirest\Request::get("http://jsonwhois.com/api/v1/whois", 
-
-		   array(
-		    "Accept" => "application/json",
-		    "Authorization" => "Token token=" . $ApiKey
-		   ),
-
-		   array(
-		       "domain" => "google.com"
-		   )
-
-		);
-
-		$data = $response->body; // Parsed body
-
-		print_r($data);
+		// add to list of abandoned domain requests
 
 		// Move to our "processed" folder
-		//imap_mail_move($inbox,$email_number,"INBOX.old-messages");
+		imap_mail_move($inbox,$email_number,"INBOX.old-messages");
+	}
+
+	// better db calls
+
+	// check number of failed attempts by this e-mail
+	//// check if email is perm banned
+
+	$domain = "lug.io";
+	if( isAdminContact($ApiKey, $domain, $From) ){
 
 	}
-	
-	echo $output;
+
 } 
 
 /* delete all messages marked for deletion */
-//imap_expunge($inbox);
+imap_expunge($inbox);
 
 /* close the connection */
 imap_close($inbox);
