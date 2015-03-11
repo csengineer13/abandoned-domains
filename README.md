@@ -34,5 +34,6 @@ groups and individuals that are looking to do good and/or create something aweso
 
 ## Contributing
 
-Used in Example Project:
-[HTML5 Boilerplate](https://html5boilerplate.com)
+Used in Example Project: [HTML5 Boilerplate](https://html5boilerplate.com)
+REST API for accessing JSON WHOIS Data: [https://jsonwhois.com/](https://jsonwhois.com/)
+For communicating with WHOIS API: [Unirest](http://unirest.io/)
