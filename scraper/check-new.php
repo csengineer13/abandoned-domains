@@ -62,7 +62,7 @@ if($emails) {
 		$requestList[] = $request;
 
 		/* Move to our "processed" folder */
-		imap_mail_move($inbox,$email_number,"INBOX.old-messages");
+		//imap_mail_move($inbox,$email_number,"INBOX.old-messages");
 	}
 
 	// Flag inc. e-mails that are blocked -- perma banned
@@ -84,7 +84,7 @@ if($emails) {
 } 
 
 /* delete all messages marked for deletion */
-imap_expunge($inbox);
+//imap_expunge($inbox);
 
 /* close the connection */
 imap_close($inbox);
