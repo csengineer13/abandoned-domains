@@ -36,27 +36,32 @@ $emails = imap_search($inbox,'ALL');
 if($emails) {
 
 	/* init our list(s) */
-
+	$requestList = [];
 	
 	/* put the newest emails on top */
 	rsort($emails);
 	
 	/* for every email... */
 	foreach($emails as $email_number) {
+
+		/* New instance of our request */
+		$request = new AbandonedDomainRequest();
 		
 		/* get information specific to this email */
 		$overview = imap_fetch_overview($inbox,$email_number,0);
 		$message = imap_fetchbody($inbox,$email_number,2);
 		
 		/* output the email header information */
-		$IsRead 	= $overview[0]->seen;
-		$Subject 	= $overview[0]->subject;
-		$From 		= $overview[0]->from;
-		$date   	= $overview[0]->date;
+		$request->IsRead 	= $overview[0]->seen;
+		$request->From 		= $overview[0]->from;
+		$request->Date   	= $overview[0]->date;
+		$request->Subject 	= $overview[0]->subject;
+		$request->Message 	= $message;
 
-		// add to list of abandoned domain requests
+		/* Add to list of abandoned domain requests */
+		$requestList[] = $request;
 
-		// Move to our "processed" folder
+		/* Move to our "processed" folder */
 		imap_mail_move($inbox,$email_number,"INBOX.old-messages");
 	}
 
@@ -69,10 +74,12 @@ if($emails) {
 	// Add > 10 failed requests today to perma banned	(if flagged for block, but not ban)
 	// Add > 100 failed requests this month to perma banned (if flagged for block, but not ban)
 
-	$domain = "lug.io";
-	if( isAdminContact($ApiKey, $domain, $From) ){
+	var_dump($requestList);
 
-	}
+	$domain = "lug.io";
+	//if( isAdminContact($ApiKey, $domain, $From) ){
+	//
+	//}
 
 } 
 
