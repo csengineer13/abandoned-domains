@@ -35,7 +35,7 @@ function isAdminContact($key, $domain, $email){
 		echo json_encode($contact);
 	}
 
-	return true;ne
+	return true;
 }
 
 ?>
