@@ -19,10 +19,8 @@ class AbandonedDomainRequest
     public $F_IsDuplicate		= False;
     public $F_IsBannable		= False;
 
-
-
     public function __construct(){
-    	
+
 	}
 }
 
