@@ -3,13 +3,26 @@
 
 class AbandonedDomainRequest 
 {
-    public $aMemberVar = 'aMemberVar Member Variable'; 
-    public $aFuncName = 'aMemberFunc'; 
+	// Properties
+    public $IsRead 	= False;
+    public $From 	= "";
+    public $Date 	= "";
+    public $Subject = ""; 
+    public $Message = "";
 
-    public function __construct( array $cfg){
-	    foreach($cfg as $k=>$v){
-	        $this->{$k}=$v;
-	    }
+    // Flags
+    public $F_IsBanned			= False;
+    public $F_IsTodayBlocked 	= False;
+    public $F_IsMonthBlocked	= False;
+    public $F_IsValid			= False;
+    public $F_IsInvalid			= False;
+    public $F_IsDuplicate		= False;
+    public $F_IsBannable		= False;
+
+
+
+    public function __construct(){
+    	
 	}
 }
 
