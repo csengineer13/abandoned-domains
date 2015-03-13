@@ -1,4 +1,18 @@
 <?php
+/* About
+ *
+ * This file is Cron'd to run every hour
+ * It iterates through the e-mails in our inbox, looking for new Abandoned Domains
+ *
+ * It adds new domains to our DB if:
+ * - Requesting e-mail is Admin_Contact in WHOIS for website
+ * - abandoned-domain.txt exists in the root directory of the website and is formatted? (may remove this requirement)
+ *
+ * Some checks exist to reduce/block spammy bastards
+ * Please note: limited to system wide 500 WHOIS requests a month
+ */
+
+
 /* Sources
  *
  * 1 - http://davidwalsh.name/gmail-php-imap
@@ -6,9 +20,11 @@
  * 3 - http://unirest.io/php.html
  */
 
-require_once __DIR__ . "/resources/Unirest.php";
 require_once __DIR__ . "/credentials.php";
-require_once __DIR__ . "/functions.php";
+require_once __DIR__ . "/resources/Unirest.php";	/* How we make REST Calls */
+require_once __DIR__ . "/classes.php";				/* Models/objects */
+require_once __DIR__ . "/functions.php";			/* Helps keep this file readable/modular */
+
 
 /* try to connect */
 $inbox = imap_open($hostname,$username,$password) or die('Cannot connect to inbox: ' . imap_last_error());
@@ -19,7 +35,7 @@ $emails = imap_search($inbox,'ALL');
 /* if emails are returned, cycle through each... */
 if($emails) {
 
-	/* init our lists */
+	/* init our list(s) */
 
 	
 	/* put the newest emails on top */
@@ -44,10 +60,14 @@ if($emails) {
 		imap_mail_move($inbox,$email_number,"INBOX.old-messages");
 	}
 
-	// better db calls
-
-	// check number of failed attempts by this e-mail
-	//// check if email is perm banned
+	// Flag inc. e-mails that are blocked -- perma banned
+	// Flag inc. e-mails with more than 3 failed req. today
+	// Flag inc. e-mails with more than 30 failed reg. this month
+	// Check non-flagged
+		// Flag valid, vs not valid, vs already exists (failed)
+	// Log all attempts
+	// Add > 10 failed requests today to perma banned	(if flagged for block, but not ban)
+	// Add > 100 failed requests this month to perma banned (if flagged for block, but not ban)
 
 	$domain = "lug.io";
 	if( isAdminContact($ApiKey, $domain, $From) ){
