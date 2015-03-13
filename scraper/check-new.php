@@ -65,21 +65,36 @@ if($emails) {
 		//imap_mail_move($inbox,$email_number,"INBOX.old-messages");
 	}
 
-	// Flag inc. e-mails that are blocked -- perma banned
-	// Flag inc. e-mails with more than 3 failed req. today
-	// Flag inc. e-mails with more than 30 failed reg. this month
-	// Check non-flagged
-		// Flag valid, vs not valid, vs already exists (failed)
-	// Log all attempts
-	// Add > 10 failed requests today to perma banned	(if flagged for block, but not ban)
-	// Add > 100 failed requests this month to perma banned (if flagged for block, but not ban)
+	/* Flag inc. e-mails that...
+	 * Have a blocked user
+	 * Have too many failed attempts today
+	 * Have too many failed attempts this month
+	 * && UPDATE isBannable FLAG 
+	 */
 
-	var_dump($requestList);
+	/* Flag inc. emails if...
+	 * valid, not valid, and/or already active in system
+	 *
+	 * Criteria: 
+	 * - Check for abandoned-domains.txt
+	 * - Check WHOIS for admin_contact email match
+	 */
 
 	$domain = "lug.io";
 	//if( isAdminContact($ApiKey, $domain, $From) ){
 	//
 	//}
+
+	/* Ban users that have isBannable flag set */
+
+	/* Add valid websites to DB */
+
+	/* Log all attempts based on flags... */
+
+	/* Dispatch e-mails based on flags... */
+
+
+	var_dump($requestList);
 
 } 
 
