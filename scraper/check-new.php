@@ -74,6 +74,14 @@ if($emails) {
 	/* Create a basic connection */
 	$DBH = dbConnect($MySQL_Host, $MySQL_DBname, $MySQL_User, $MySQL_Pass);
 
+	/* Check for users/domain
+	 * If we don't have these... 
+	 * then we can't move forward at all.
+	 * This call will remove requests with bad criteria.
+	 */
+	$requestList = updateValidEmailFlags($requestList);
+
+
 	/* Flag inc. e-mails that...
 	 * Have a blocked user
 	 * Have too many failed attempts today
@@ -82,29 +90,37 @@ if($emails) {
 	 */
 	$requestList = updateRequestFlags($DBH, $requestList, $todayLimit, $monthLimit);
 
-	/* Flag inc. emails if...
-	 * valid, not valid, and/or already active in system
+
+	/* JSON Check for non-banned domains
 	 *
 	 * Criteria: 
 	 * - Check for abandoned-domains.txt
-	 * - Check WHOIS for admin_contact email match
+	 * - Is it properly formatted?
 	 */
+	$requestList = updateJSONFlags($requestList);
 
-	$domain = "lug.io";
+
+	/* WHOIS Check for unflagged requests
+	 *
+	 * Criteria: 
+	 * - Check submitting user's email against WHOIS admin_contact
+	 */
+	$requestList = updateWHOISFlags($requestList);
 	//if( isAdminContact($ApiKey, $domain, $From) ){
-	//
-	//}
-
-	/* Ban users that have isBannable flag set */
-
-	/* Add valid websites to DB */
-
-	/* Log all attempts based on flags... */
-
-	/* Dispatch e-mails based on flags... */
 
 
-	var_dump($requestList);
+	/* 1. Add any new users */
+
+	/* 2. Log all attempts based on flags... */
+
+	/* 3. Ban users that have isBannable flag set */
+
+	/* 4. Add valid websites to DB  */
+
+	/* 5. Dispatch e-mails based on flags... */
+
+
+	//var_dump($requestList);
 
 	# close the connection
 	$DBH = null;

@@ -55,6 +55,11 @@ function isAdminContact($key, $domain, $email){
 	return true;
 }
 
+
+function updateValidEmailFlags($requests) {
+	return $requests;
+}
+
 /* updateRequestFlags
  * $emails - a list of AbandonedDomainRequest objects
  * $todayLimit - Limit for how many failed requests they can have today
@@ -111,9 +116,11 @@ function updateRequestFlags($DBH, $requests, $todayLimit, $monthLimit)
 	}else{
 		# No results :(
 		// todo: we don't need to set any flags? May need to add new users (wait till log?)
-		echo "NOTHING!";
 	}
 
 	return $requests;
 }
+
+function updateJSONFlags($requests){ return $requests; }
+function updateWHOISFlags($requests){ return $requests; }
 ?>
