@@ -84,10 +84,29 @@ function updateRequestFlags($DBH, $requests, $todayLimit, $monthLimit)
 	$STH->execute($emailAddresses);
 
 	if ($STH->rowCount() > 0) {
+
 		# Have results! (:
-		while($row = $STH->fetch(PDO::FETCH_ASSOC)) {
-			// Here is where we need to check values and set flags
-			print_r($row);
+		while($row = $STH->fetch(PDO::FETCH_ASSOC)) 
+		{
+			# Compare EA request agains EA result
+			foreach($requests as $key => $request){
+				// If we have an e-mail match...
+				if( $request->From == $row["Email"] ){
+					// Check properties and set flags
+					if( $row["FailedToday"] > $todayLimit ){	
+						$request->F_IsTodayBlocked = True;
+					}
+					if( $row["FailedMonth"] > $monthLimit ){ 	
+						$request->F_IsMonthBlocked = True; 
+					}
+					if( $row["FailedAllTime"] > ($monthLimit * 2) ){ 	
+						$request->F_IsBannable = True; 
+					}
+					if( $row["IsBanned"] > $todayLimit ){		
+						$request->F_IsBanned = True;
+					}
+				}
+			}
 		}
 	}else{
 		# No results :(

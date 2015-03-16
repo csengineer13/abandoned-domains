@@ -80,7 +80,7 @@ if($emails) {
 	 * Have too many failed attempts this month
 	 * && UPDATE isBannable FLAG 
 	 */
-	$emails = updateRequestFlags($DBH, $requestList, $todayLimit, $monthLimit);
+	$requestList = updateRequestFlags($DBH, $requestList, $todayLimit, $monthLimit);
 
 	/* Flag inc. emails if...
 	 * valid, not valid, and/or already active in system
@@ -104,7 +104,7 @@ if($emails) {
 	/* Dispatch e-mails based on flags... */
 
 
-	//var_dump($requestList);
+	var_dump($requestList);
 
 	# close the connection
 	$DBH = null;
