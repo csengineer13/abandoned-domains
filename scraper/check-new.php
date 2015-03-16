@@ -50,10 +50,13 @@ if($emails) {
 		/* get information specific to this email */
 		$overview = imap_fetch_overview($inbox,$email_number,0);
 		$message = imap_fetchbody($inbox,$email_number,2);
+		/* Used to bypass "known" email addresses returning user's name */
+		$header = imap_headerinfo($inbox, $email_number);
+		$fromaddr = $header->from[0]->mailbox . "@" . $header->from[0]->host;
 		
 		/* output the email header information */
 		$request->IsRead 	= $overview[0]->seen;
-		$request->From 		= $overview[0]->from;
+		$request->From 		= $fromaddr;//= $overview[0]->from;
 		$request->Date   	= $overview[0]->date;
 		$request->Subject 	= $overview[0]->subject;
 		$request->Message 	= $message;
