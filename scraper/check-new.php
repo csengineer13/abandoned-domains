@@ -25,9 +25,12 @@ require_once __DIR__ . "/resources/Unirest.php";	/* How we make REST Calls */
 require_once __DIR__ . "/classes.php";				/* Models/objects */
 require_once __DIR__ . "/functions.php";			/* Helps keep this file readable/modular */
 
+$todayLimit = 3;
+$monthLimit = 30;
+
 
 /* try to connect */
-$inbox = imap_open($hostname,$username,$password) or die('Cannot connect to inbox: ' . imap_last_error());
+$inbox = imap_open($Email_Host, $Email_User, $Email_Pass) or die('Cannot connect to inbox: ' . imap_last_error());
 
 /* grab emails */
 $emails = imap_search($inbox,'ALL');
@@ -68,12 +71,16 @@ if($emails) {
 		//imap_mail_move($inbox,$email_number,"INBOX.old-messages");
 	}
 
+	/* Create a basic connection */
+	$DBH = dbConnect($MySQL_Host, $MySQL_DBname, $MySQL_User, $MySQL_Pass);
+
 	/* Flag inc. e-mails that...
 	 * Have a blocked user
 	 * Have too many failed attempts today
 	 * Have too many failed attempts this month
 	 * && UPDATE isBannable FLAG 
 	 */
+	$emails = updateRequestFlags($DBH, $requestList, $todayLimit, $monthLimit);
 
 	/* Flag inc. emails if...
 	 * valid, not valid, and/or already active in system
@@ -97,7 +104,10 @@ if($emails) {
 	/* Dispatch e-mails based on flags... */
 
 
-	var_dump($requestList);
+	//var_dump($requestList);
+
+	# close the connection
+	$DBH = null;
 
 } 
 
