@@ -67,6 +67,9 @@ if($emails) {
 		/* Add to list of abandoned domain requests */
 		$requestList[] = $request;
 
+		/* Extract target domain */
+		$request->Domain = "";
+
 		/* Move to our "processed" folder */
 		//imap_mail_move($inbox,$email_number,"INBOX.old-messages");
 	}
