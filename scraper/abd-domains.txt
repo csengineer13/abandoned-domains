@@ -1,0 +1,15 @@
+{
+	"Domain": "http://lug.io",
+	"Available": "true",
+	"Contact": {
+		"FirstName": "Danny",
+		"LastName": "Brown",
+		"Email": "csengineer13@gmail.com",
+		"Phone": ""
+	},
+	"Criteria": {
+		"Education": "Must",
+		"Startup": "Maybe",
+		"Personal": "No"
+	}
+}
