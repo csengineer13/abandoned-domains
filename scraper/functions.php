@@ -57,6 +57,7 @@ function isAdminContact($key, $domain, $email){
 
 
 function updateValidEmailFlags($requests) {
+	// todo: implement this...
 	return $requests;
 }
 
@@ -121,6 +122,63 @@ function updateRequestFlags($DBH, $requests, $todayLimit, $monthLimit)
 	return $requests;
 }
 
-function updateJSONFlags($requests){ return $requests; }
+
+/* Simple function for testing if string is JSON
+ * Returns TRUE or FALSE
+ */
+function isJson($string) {
+	json_decode($string);
+ 	return (json_last_error() == JSON_ERROR_NONE);
+}
+
+
+/* updateJSONFlags
+ *
+ * Scrapes /abd-domain.txt of each domain in batch of requests
+ * If we find JSON, we try to update the properties for each request
+ * No JSON? Set a failed flag
+ * Bad JSON? Set a failed flag
+ *
+ * Returns updated batch of requests
+ */
+function updateJSONFlags($requests){
+
+	foreach($requests as $key => $request)
+	{	
+		$URL = "http://" . $request->Domain . "/abd-domains.txt";
+
+        $CH = curl_init();
+        $headers = array(
+    		'Accept: application/json',
+    		'Content-type: application/json'
+		);
+		curl_setopt($CH, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($CH, CURLOPT_HEADER, false);
+        curl_setopt($CH, CURLOPT_URL, $URL);
+        /* Setting cURL's option to return the webpage data */
+        curl_setopt($CH, CURLOPT_RETURNTRANSFER, TRUE);
+        /* Grabbing what Curl returned */
+        $data = curl_exec($CH); 				
+        curl_close($CH);    							
+
+        /* Did we get JSON back? */
+        if( isJson($data) )
+        {
+ 			/* Decode */
+        	$JSONdata = json_decode($data);
+
+        	/* Update request properties */
+        	// todo: add properties to request...
+        	// todo: check to make sure required properties are filled out?
+
+        	/* Update JSON flag */    
+        	$request->F_HasJSON 		= True;
+    		$request->F_HasValidJSON 	= True;
+        }
+        /* Flag is set to "False" by default */
+    }
+
+	return $requests; 
+}
 function updateWHOISFlags($requests){ return $requests; }
 ?>
