@@ -185,6 +185,20 @@ function updateJSONFlags($requests){
 
 	return $requests; 
 }
-function updateWHOISFlags($requests){ return $requests; }
+function updateWHOISFlags($requests){ 
+
+	foreach($requests as $key => $request)
+	{	
+		/* Make sure it is worth our time to check */
+		if(	$request->F_IsBanned || $request->F_IsTodayBlocked ||
+		 	$request->F_IsMonthBlocked || $request->F_IsBannable ||
+		 	!$request->F_HasJSON || !$request->F_HasValidJSON){
+			continue;
+		}
+
+	}
+
+	return $requests; 
+}
 
 ?>
