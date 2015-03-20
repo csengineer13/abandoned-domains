@@ -68,7 +68,8 @@ if($emails) {
 		$requestList[] = $request;
 
 		/* Extract target domain */
-		$request->Domain = "";
+		// todo: get domain from e-mail message
+		$request->Domain = "lug.io";
 
 		/* Move to our "processed" folder */
 		//imap_mail_move($inbox,$email_number,"INBOX.old-messages");
@@ -110,19 +111,21 @@ if($emails) {
 	 * - Check submitting user's email against WHOIS admin_contact
 	 */
 	$requestList = updateWHOISFlags($requestList);
-	//if( isAdminContact($ApiKey, $domain, $From) ){
-
 
 	/* 1. Add any new users */
+	//addNewUsers($requestList);
 
 	/* 2. Log all attempts based on flags... */
+	//updateRequestLogs($requestList);
 
 	/* 3. Ban users that have isBannable flag set */
+	//updateBannedUsers($requestList);
 
 	/* 4. Add valid websites to DB  */
+	//addAbandonedDomains($requestList);
 
 	/* 5. Dispatch e-mails based on flags... */
-
+	//followUpRequestEmails($requestList);
 
 	//var_dump($requestList);
 
