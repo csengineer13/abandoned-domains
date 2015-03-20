@@ -17,12 +17,11 @@ function dbConnect($host, $dbname, $user, $pass){
 
 
 
-/* isAdminContact
+/* getWHOISAdminContacts
  * Does a WHOIS lookup on $domain
  * Generates a list of Admin_Contacts for $domain
- * Returns if $email is in list of Admin_Contacts
  */
-function isAdminContact($key, $domain, $email){
+function getWHOISAdminContacts($key, $domain){
 
 	// WHOIS Request
 	$response = Unirest\Request::get("http://jsonwhois.com/api/v1/whois", 
@@ -48,11 +47,8 @@ function isAdminContact($key, $domain, $email){
 
 	// What we're here for
 	$AdminContacts = $ParsedBody->admin_contacts;
-	foreach($AdminContacts as $contact) {
-		echo json_encode($contact);
-	}
 
-	return true;
+	return $AdminContacts;
 }
 
 
@@ -178,6 +174,7 @@ function updateJSONFlags($requests){
 
         	/* Update JSON flag */    
         	$request->F_HasJSON 		= True;
+        	// todo: actual validation (schema check)
     		$request->F_HasValidJSON 	= True;
         }
         /* Flag is set to "False" by default */
@@ -185,7 +182,7 @@ function updateJSONFlags($requests){
 
 	return $requests; 
 }
-function updateWHOISFlags($requests){ 
+function updateWHOISFlags($key, $requests){ 
 
 	foreach($requests as $key => $request)
 	{	
@@ -196,6 +193,21 @@ function updateWHOISFlags($requests){
 			continue;
 		}
 
+		$AdminContacts = getWHOISAdminContacts($key, $request->Domain);
+
+		// todo: were any contacts returned?
+		$request->F_HasViewableWHOIS  = True;
+
+		/* Do we have a match for an admin contact? */
+		foreach($AdminContacts as $contact) 
+		{
+			/* Do we have an e-mail match? */
+			$adminEmail = $contact->email;
+			if($adminEmail == $request->From){
+				$request->F_IsOwner = true;
+				break;
+			}
+		}
 	}
 
 	return $requests; 
