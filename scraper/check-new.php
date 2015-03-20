@@ -82,7 +82,8 @@ if($emails) {
 	 * then we can't move forward at all.
 	 * This call will remove requests with bad criteria.
 	 */
-	$requestList = updateValidEmailFlags($requestList);
+	// todo: implement this
+	//$requestList = updateValidEmailFlags($requestList);
 
 
 	/* Flag inc. e-mails that...
