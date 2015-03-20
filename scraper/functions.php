@@ -145,6 +145,11 @@ function updateJSONFlags($requests){
 
 	foreach($requests as $key => $request)
 	{	
+		if(	$request->F_IsBanned || $request->F_IsTodayBlocked ||
+		 	$request->F_IsMonthBlocked || $request->F_IsBannable){
+			continue;
+		}
+
 		$URL = "http://" . $request->Domain . "/abd-domains.txt";
 
         $CH = curl_init();
@@ -181,4 +186,5 @@ function updateJSONFlags($requests){
 	return $requests; 
 }
 function updateWHOISFlags($requests){ return $requests; }
+
 ?>
